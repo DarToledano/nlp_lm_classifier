@@ -1,0 +1,9 @@
+# Ignore PyCharm project settings
+.idea/
+
+# Ignore dataset
+aclImdb/
+
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
