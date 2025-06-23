@@ -5,6 +5,8 @@ from data.preprocess import (
     print_rare_token_stats,
     print_length_statistics
 )
+from data.language_model_dataset import TextDataset
+from collections import Counter
 
 if __name__ == "__main__":
     print("Loading IMDB dataset...")
@@ -32,3 +34,23 @@ if __name__ == "__main__":
     print_rare_token_stats(train_data, cutoff=1)
 
     print("\nEDA complete.")
+
+    # 👉 Add this block here
+    def build_vocab(reviews, min_freq=2):
+        counter = Counter(token for review in reviews for token in review)
+        vocab = {"<UNK>": 0}
+        for token, freq in counter.items():
+            if freq >= min_freq:
+                vocab[token] = len(vocab)
+        return vocab
+
+    print("Building vocabulary from training data...")
+    vocab = build_vocab(train_data)
+    print(f"Vocabulary size: {len(vocab)}")
+
+    print("Creating TextDataset...")
+    train_dataset = TextDataset(train_data, vocab, seq_len=30)
+
+    print(f"Total training samples: {len(train_dataset)}")
+
+
