@@ -2,7 +2,7 @@
 .idea/
 
 # Ignore dataset
-aclImdb/
+#aclImdb/
 
 # Ignore Python cache and compiled files
 __pycache__/
