@@ -1,41 +1,13 @@
-from data.language_model_dataset import TextDataset
-from data.preprocess import load_imdb_dataset
 from model.language_model import LanguageModel
-from torch.utils.data import DataLoader
-from collections import Counter
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
+from data.data_loader_utils import build_vocab, create_datasets_and_loaders
+from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
 
-# Reduced model and training parameters for faster debugging
-SEQ_LEN = 30
-BATCH_SIZE = 64
-EMBEDDING_DIM = 200
-HIDDEN_DIM = 256
-NUM_LAYERS = 2
-DROPOUT = 0.3
-EPOCHS = 5
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def build_vocab(reviews, min_freq=2):
-    counter = Counter(token for review in reviews for token in review)
-    vocab = {"<UNK>": 0}
-    for token, freq in counter.items():
-        if freq >= min_freq:
-            vocab[token] = len(vocab)
-    return vocab
-
-def create_datasets_and_loaders(train_data, val_data, test_data, vocab):
-    train_dataset = TextDataset(train_data, vocab, seq_len=SEQ_LEN)
-    val_dataset = TextDataset(val_data, vocab, seq_len=SEQ_LEN)
-    test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
-
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
-
-    return train_loader, val_loader, test_loader
+import math
 
 def train_one_epoch(model, dataloader, criterion, optimizer):
     model.train()
@@ -53,7 +25,9 @@ def train_one_epoch(model, dataloader, criterion, optimizer):
         correct += (preds == targets).sum().item()
         total += targets.size(0)
 
-    return total_loss / len(dataloader), correct / total
+    avg_loss = total_loss / len(dataloader)
+    perplexity = math.exp(avg_loss)
+    return avg_loss, correct / total, perplexity
 
 def validate(model, dataloader, criterion):
     model.eval()
@@ -69,11 +43,11 @@ def validate(model, dataloader, criterion):
             correct += (preds == targets).sum().item()
             total += targets.size(0)
 
-    return total_loss / len(dataloader), correct / total
+    avg_loss = total_loss / len(dataloader)
+    perplexity = math.exp(avg_loss)
+    return avg_loss, correct / total, perplexity
 
-def train_pipeline():
-    # ✅ Use smaller dataset for quick training
-    train_data, val_data, test_data = load_imdb_dataset("aclImdb")
+def train_pipeline(train_data, val_data, test_data):
 
     vocab = build_vocab(train_data)
     train_loader, val_loader, _ = create_datasets_and_loaders(train_data, val_data, test_data, vocab)
@@ -92,19 +66,22 @@ def train_pipeline():
     train_losses, val_losses, train_accs, val_accs = [], [], [], []
 
     for epoch in range(EPOCHS):
-        print(f"\nEpoch {epoch+1}/{EPOCHS}")
-        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer)
-        val_loss, val_acc = validate(model, val_loader, criterion)
-        print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f}")
-        print(f"Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.4f}")
+        print(f"\nEpoch {epoch + 1}/{EPOCHS}")
+        train_loss, train_acc, train_ppl = train_one_epoch(model, train_loader, criterion, optimizer)
+        val_loss, val_acc, val_ppl = validate(model, val_loader, criterion)
+
+        print(f"Train Loss: {train_loss:.4f} | Train Acc: {train_acc:.4f} | Train PPL: {train_ppl:.2f}")
+        print(f"Val Loss:   {val_loss:.4f} | Val Acc:   {val_acc:.4f} | Val PPL:   {val_ppl:.2f}")
 
         train_losses.append(train_loss)
         val_losses.append(val_loss)
         train_accs.append(train_acc)
         val_accs.append(val_acc)
 
-    # Optional: comment out for speed
+    torch.save(model.state_dict(), "model.pth")
     plot_metrics(train_losses, val_losses, train_accs, val_accs)
+
+    return vocab
 
 def plot_metrics(train_losses, val_losses, train_accs, val_accs):
     plt.figure(figsize=(10, 4))
@@ -122,3 +99,39 @@ def plot_metrics(train_losses, val_losses, train_accs, val_accs):
 
     plt.tight_layout()
     plt.show()
+
+# Task 2
+
+
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from data.config import DEVICE
+
+def train_classifier(model, train_X, train_y, val_X, val_y, epochs=10, lr=0.001):
+    model.to(DEVICE)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+
+    train_X, train_y = train_X.to(DEVICE), train_y.to(DEVICE)
+    val_X, val_y = val_X.to(DEVICE), val_y.to(DEVICE)
+
+    for epoch in range(1, epochs + 1):
+        model.train()
+        optimizer.zero_grad()
+        outputs = model(train_X)
+        loss = criterion(outputs, train_y)
+        loss.backward()
+        optimizer.step()
+
+        # Validation
+        model.eval()
+        with torch.no_grad():
+            val_outputs = model(val_X)
+            val_preds = torch.argmax(val_outputs, dim=1)
+            val_acc = (val_preds == val_y).float().mean().item()
+
+        print(f"Epoch {epoch}: Train Loss = {loss.item():.4f}, Val Acc = {val_acc:.4f}")
+
+    return model
+

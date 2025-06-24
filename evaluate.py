@@ -1,23 +1,14 @@
-# evaluation.py
-
-import torch
 import torch.nn as nn
 from data.language_model_dataset import TextDataset
-from data.preprocess import load_imdb_dataset
 from model.language_model import LanguageModel
 from torch.utils.data import DataLoader
 from collections import Counter
 import math
-
-# Config
-SEQ_LEN = 30
-BATCH_SIZE = 64
-EMBEDDING_DIM = 200
-HIDDEN_DIM = 256
-NUM_LAYERS = 2
-DROPOUT = 0.3
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import torch
+from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
+from data.preprocess import load_imdb_dataset_with_labels
 def build_vocab(reviews, min_freq=2):
     counter = Counter(token for review in reviews for token in review)
     vocab = {"<UNK>": 0}
@@ -48,9 +39,9 @@ def evaluate_model(model, dataloader, criterion):
     perplexity = math.exp(avg_loss)
     return avg_loss, perplexity
 
-def run_evaluation():
-    print("==> Loading dataset and vocabulary...")
-    train_data, _, test_data = load_imdb_dataset("aclImdb")
+def run_evaluation_language_model(train_data, test_data):
+
+    print("==> Loading test dataset and vocabulary...")
     vocab = build_vocab(train_data)
 
     print("==> Preparing test loader...")
@@ -73,3 +64,25 @@ def run_evaluation():
 
     print(f"\nTest Loss: {avg_loss:.4f}")
     print(f"Test Perplexity: {perplexity:.2f}")
+
+
+def plot_confusion_matrix(preds, true_labels, title="Confusion Matrix"):
+    cm = confusion_matrix(true_labels, preds)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["neg", "pos"])
+    disp.plot(cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.show()
+
+
+def run_error_analysis(preds, true_labels, texts):
+    print("\nError Analysis:")
+    for i in range(len(preds)):
+        if preds[i] != true_labels[i]:
+            print(f" Review: {' '.join(texts[i][:30])}...")
+            print(f"   True: {true_labels[i]} | Pred: {preds[i]}")
+            print("--------------------------------------------------")
+
+def run_evaluation_classification(preds, test_y, test_data):
+
+    plot_confusion_matrix(preds.cpu(), test_y)
+    run_error_analysis(preds.cpu(), test_y, test_data)

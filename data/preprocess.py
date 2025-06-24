@@ -7,11 +7,12 @@ from collections import Counter
 from nltk.tokenize import word_tokenize
 import nltk
 nltk.download('punkt')
+import re
 
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"<.*?>", "", text)  # Remove HTML tags
-    text = re.sub(r"[^a-zA-Z0-9\s]", "", text)  # Remove punctuation
+    text = re.sub(r"[^a-zA-Z0-9\s\-]", "", text)  # Keep hyphens
     return text
 
 def load_reviews_from_dir(dir_path):
@@ -24,24 +25,37 @@ def load_reviews_from_dir(dir_path):
             reviews.append(tokens)
     return reviews
 
-def load_imdb_dataset(base_dir):
+def load_imdb_dataset_with_labels(base_dir):
     """
-    Loads the IMDB dataset and returns tokenized reviews: train, val, and test.
+    Loads the IMDB dataset and returns:
+    - tokenized reviews: train/val/test
+    - labels (0 = negative, 1 = positive)
     """
+
     train_pos = load_reviews_from_dir(os.path.join(base_dir, "train/pos"))
     train_neg = load_reviews_from_dir(os.path.join(base_dir, "train/neg"))
     test_pos = load_reviews_from_dir(os.path.join(base_dir, "test/pos"))
     test_neg = load_reviews_from_dir(os.path.join(base_dir, "test/neg"))
 
-    train_data = train_pos + train_neg
-    test_data = test_pos + test_neg
+    train_texts = train_pos + train_neg
+    train_labels = [1] * len(train_pos) + [0] * len(train_neg)
 
-    # Shuffle and split train into train/val
-    random.shuffle(train_data)
-    split_idx = int(len(train_data) * 0.9)
-    train, val = train_data[:split_idx], train_data[split_idx:]
+    test_texts = test_pos + test_neg
+    test_labels = [1] * len(test_pos) + [0] * len(test_neg)
 
-    return train, val, test_data
+    combined = list(zip(train_texts, train_labels))
+    random.shuffle(combined)
+    train_texts, train_labels = zip(*combined)
+
+    split_idx = int(len(train_texts) * 0.9)
+    train_texts, val_texts = train_texts[:split_idx], train_texts[split_idx:]
+    train_labels, val_labels = train_labels[:split_idx], train_labels[split_idx:]
+
+    return (
+        list(train_texts), list(train_labels),
+        list(val_texts), list(val_labels),
+        test_texts, test_labels
+    )
 
 def plot_review_length_histogram(reviews, title):
     lengths = [len(r) for r in reviews]
