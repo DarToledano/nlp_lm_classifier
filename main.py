@@ -6,6 +6,7 @@ from data.preprocess import (
     print_length_statistics
 )
 from train import train_pipeline
+from evaluate import run_evaluation
 
 def perform_eda(train_data, val_data, test_data):
     print("\nSample review (first 20 tokens):")
@@ -30,9 +31,12 @@ if __name__ == "__main__":
     print("==> Loading raw dataset for EDA...")
     train_data, val_data, test_data = load_imdb_dataset("aclImdb")
     perform_eda(train_data, val_data, test_data)
+    print("\n==> EDA complete.")
 
     print("\n==> Starting training pipeline...")
     train_pipeline()
+    print("\n Full pipeline complete.")
 
-    print("\n"
-          " Full pipeline complete.")
+    print("\n==> Starting evaluation ...")
+    run_evaluation()
+    print("\n==> Evaluation complete.")

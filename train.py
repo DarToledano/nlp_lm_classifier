@@ -26,16 +26,14 @@ def build_vocab(reviews, min_freq=2):
             vocab[token] = len(vocab)
     return vocab
 
-def create_datasets_and_loaders(train_data, val_data, test_data, vocab):
+def create_datasets_and_loaders(train_data, val_data, vocab):
     train_dataset = TextDataset(train_data, vocab, seq_len=SEQ_LEN)
     val_dataset = TextDataset(val_data, vocab, seq_len=SEQ_LEN)
-    test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
-    return train_loader, val_loader, test_loader
+    return train_loader, val_loader
 
 def train_one_epoch(model, dataloader, criterion, optimizer):
     model.train()
@@ -73,10 +71,10 @@ def validate(model, dataloader, criterion):
 
 def train_pipeline():
     # ✅ Use smaller dataset for quick training
-    train_data, val_data, test_data = load_imdb_dataset("aclImdb")
+    train_data, val_data = load_imdb_dataset("aclImdb")
 
     vocab = build_vocab(train_data)
-    train_loader, val_loader, _ = create_datasets_and_loaders(train_data, val_data, test_data, vocab)
+    train_loader, val_loader = create_datasets_and_loaders(train_data, val_data,vocab)
 
     model = LanguageModel(
         vocab_size=len(vocab),
