@@ -1,5 +1,3 @@
-# main.py
-
 from data.preprocess import (
     load_imdb_dataset,
     plot_review_length_histogram,
@@ -7,7 +5,7 @@ from data.preprocess import (
     print_rare_token_stats,
     print_length_statistics
 )
-from train import prepare_training
+from train import train_pipeline
 
 def perform_eda(train_data, val_data, test_data):
     print("\nSample review (first 20 tokens):")
@@ -33,7 +31,8 @@ if __name__ == "__main__":
     train_data, val_data, test_data = load_imdb_dataset("aclImdb")
     perform_eda(train_data, val_data, test_data)
 
-    print("\n==> Preparing for training...")
-    train_loader, val_loader, test_loader, vocab = prepare_training()
+    print("\n==> Starting training pipeline...")
+    train_pipeline()
 
-    print("\n✅ Main pipeline complete.")
+    print("\n"
+          " Full pipeline complete.")
