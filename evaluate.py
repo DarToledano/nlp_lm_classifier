@@ -71,5 +71,5 @@ def run_evaluation():
     print("==> Evaluating...")
     avg_loss, perplexity = evaluate_model(model, test_loader, criterion)
 
-    print(f"\n✅ Test Loss: {avg_loss:.4f}")
-    print(f"✅ Test Perplexity: {perplexity:.2f}")
+    print(f"\nTest Loss: {avg_loss:.4f}")
+    print(f"Test Perplexity: {perplexity:.2f}")
