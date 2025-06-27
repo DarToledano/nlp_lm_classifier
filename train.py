@@ -61,7 +61,7 @@ def train_pipeline(train_data, val_data, test_data):
     ).to(DEVICE)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
 
     train_losses, val_losses, train_accs, val_accs = [], [], [], []
 
