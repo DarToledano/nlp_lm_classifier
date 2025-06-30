@@ -37,9 +37,13 @@ if __name__ == "__main__":
     perform_eda(train_data, val_data, test_data)
     print("\n EDA complete.")
 
-    print("\n==> Starting training pipeline...")
+    print("\n==> Starting training model...")
     vocab = train_pipeline(train_data, val_data, test_data)
-    print("\n Full pipeline complete.")
+    print("\n==> training model complete.")
+
+    print("\n==> Starting evaluation ...")
+    run_evaluation_language_model(test_data, vocab)
+    print("\n==> evaluation complete.")
 
     # Task 2
     print("\n==> Starting classification ...")
