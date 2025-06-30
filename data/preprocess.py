@@ -13,7 +13,7 @@ import re
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"<.*?>", "", text)  # Remove HTML
-    text = re.sub(r"[^a-zA-Z0-9\s\.,!?'\-]", "", text)  # Keep punctuation
+    text = re.sub(r"[^a-zA-Z0-9\s\.,!?'\-]", "", text)
     return text
 
 def load_reviews_from_dir(dir_path):

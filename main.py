@@ -35,19 +35,24 @@ if __name__ == "__main__":
 
     print("\n==> Running Experiment B:")
     run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
-    print("\n==> Evaluation for Experiment B:")
-"""
-    print("==> preforming EDA")
-    perform_eda(train_data, val_data, test_data)
-    print("\n EDA complete.")
-    
+
+    """
     print("\n==> Starting training pipeline...")
     vocab = train_pipeline(train_data, val_data, test_data)
     print("\n Full pipeline complete.")
 
     print("\n==> Starting evaluation ...")
-    run_evaluation_language_model(train_data, test_data)
+    run_evaluation_language_model(test_data, vocab)
     print("\n==> Evaluation complete.")
+"""
+"""
+    print("==> preforming EDA")
+    perform_eda(train_data, val_data, test_data)
+    print("\n EDA complete.")
+    
+    
+
+    
 
     # Task 2
     print("\n==> Starting classification ...")

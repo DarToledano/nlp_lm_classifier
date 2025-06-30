@@ -32,10 +32,7 @@ def evaluate_model(model, dataloader, criterion):
     perplexity = math.exp(avg_loss)
     return avg_loss, perplexity
 
-def run_evaluation_language_model(train_data, test_data):
-
-    print("==> Loading test dataset and vocabulary...")
-    vocab = build_vocab(train_data)
+def run_evaluation_language_model(test_data, vocab):
 
     print("==> Preparing test loader...")
     test_loader = create_test_loader(test_data, vocab)
