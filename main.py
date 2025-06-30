@@ -33,35 +33,30 @@ if __name__ == "__main__":
     print("==> Loading raw dataset...")
     train_data, train_labels, val_data, val_labels, test_data, test_labels = load_imdb_dataset_with_labels("data/aclImdb")
 
-    print("\n==> Running Experiment B:")
-    run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
-
-    """
-    print("\n==> Starting training pipeline...")
-    vocab = train_pipeline(train_data, val_data, test_data)
-    print("\n Full pipeline complete.")
-
-    print("\n==> Starting evaluation ...")
-    run_evaluation_language_model(test_data, vocab)
-    print("\n==> Evaluation complete.")
-"""
-"""
     print("==> preforming EDA")
     perform_eda(train_data, val_data, test_data)
     print("\n EDA complete.")
-    
-    
 
-    
+    print("\n==> Starting training pipeline...")
+    vocab = train_pipeline(train_data, val_data, test_data)
+    print("\n Full pipeline complete.")
 
     # Task 2
     print("\n==> Starting classification ...")
 
     print("\n==> Starting experiment A:")
-    preds_a, test_y = run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels)
-    print("\n==> tarting evaluation experiment A:")
-    run_evaluation_classification(preds_a, test_y, test_labels)
-"""
+    run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels)
+    print("\n Experiment A complete.")
+
+    print("\n==> Starting Experiment B:")
+    run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
+    print("\n Experiment B complete.")
+
+    
+
+    
+
+
 
 
 
