@@ -8,7 +8,7 @@ from data.preprocess import (
 from train import train_pipeline
 from evaluate import run_evaluation_language_model,run_evaluation_classification
 from experiments.experiment_a import run_experiment_a
-
+from experiments.experiment_b import run_experiment_b
 def perform_eda(train_data, val_data, test_data):
     print("\nSample review (first 20 tokens):")
     print(train_data[0][:20])
@@ -47,10 +47,13 @@ if __name__ == "__main__":
     print("\n==> Starting classification ...")
 
     print("\n==> Starting experiment A:")
-    preds, test_y = run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels)
+    preds_a, test_y = run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels)
     print("\n==> tarting evaluation experiment A:")
-    run_evaluation_classification(preds, test_y, test_labels)
+    run_evaluation_classification(preds_a, test_y, test_labels)
 
+    print("\n==> Running Experiment B:")
+    model = run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
+    print("\n==> Evaluation for Experiment B:")
 
 
 
