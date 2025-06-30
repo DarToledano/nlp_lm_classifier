@@ -11,6 +11,7 @@ from train import train_classifier_B
 # Load Word2Vec once at module level
 word2vec_model = KeyedVectors.load_word2vec_format('data/GoogleNews-vectors-negative300.bin', binary=True)
 
+# Experiment B: Using RNN (LSTM) classifier with pre-trained Word2Vec embeddings (end-to-end sequence classification)
 
 def load_word2vec(vocab, embedding_dim):
     """

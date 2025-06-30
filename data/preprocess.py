@@ -6,6 +6,8 @@ import numpy as np
 from collections import Counter
 from nltk.tokenize import word_tokenize
 import nltk
+nltk.download('punkt')
+nltk.download('punkt_tab')
 import re
 
 def preprocess_text(text):

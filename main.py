@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # Task 1
     print("==> Loading raw dataset...")
-    train_data, train_labels, val_data, val_labels, test_data, test_labels = load_imdb_dataset_with_labels("aclImdb")
+    train_data, train_labels, val_data, val_labels, test_data, test_labels = load_imdb_dataset_with_labels("data/aclImdb")
 
     print("\n==> Running Experiment B:")
     run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)

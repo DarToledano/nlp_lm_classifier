@@ -8,6 +8,8 @@ from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYE
 from train import train_classifier_A
 from evaluate import run_evaluation_classification
 
+# Experiment A: Using pre-trained Language Model (LM) as a feature extractor (sentence embeddings) + MLP classifier
+
 def extract_sentence_embeddings(dataloader, language_model, device):
     embeddings = []
     labels = []
