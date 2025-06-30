@@ -1,12 +1,7 @@
 from model.language_model import LanguageModel
-import torch
-import torch.nn as nn
-import torch.optim as optim
 import matplotlib.pyplot as plt
 from data.data_loader_utils import build_vocab, create_datasets_and_loaders
-from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
-
-
+from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE, LEARNING_RATE
 import math
 
 def train_one_epoch(model, dataloader, criterion, optimizer):
@@ -57,11 +52,11 @@ def train_pipeline(train_data, val_data, test_data):
         embedding_dim=EMBEDDING_DIM,
         hidden_dim=HIDDEN_DIM,
         num_layers=NUM_LAYERS,
-        dropout=DROPOUT
+        #dropout=DROPOUT
     ).to(DEVICE)
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     train_losses, val_losses, train_accs, val_accs = [], [], [], []
 
@@ -101,14 +96,7 @@ def plot_metrics(train_losses, val_losses, train_accs, val_accs):
     plt.show()
 
 # Task 2
-
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from data.config import DEVICE
-
-def train_classifier(model, train_X, train_y, val_X, val_y, epochs=10, lr=0.001):
+def train_classifier_A(model, train_X, train_y, val_X, val_y, epochs=10, lr=0.001):
     model.to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr)
@@ -135,3 +123,56 @@ def train_classifier(model, train_X, train_y, val_X, val_y, epochs=10, lr=0.001)
 
     return model
 
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from data.config import DEVICE
+
+def train_classifier_B(model, train_loader, val_loader, epochs=10, lr=0.001):
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+
+    train_losses = []
+    val_losses = []
+
+    for epoch in range(1, epochs + 1):
+        # -------- Train ----------
+        model.train()
+        total_train_loss = 0
+
+        for inputs, labels in train_loader:
+            inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            total_train_loss += loss.item()
+
+        avg_train_loss = total_train_loss / len(train_loader)
+        train_losses.append(avg_train_loss)
+
+        # -------- Validation ----------
+        model.eval()
+        total_val_loss = 0
+        correct = 0
+        total = 0
+
+        with torch.no_grad():
+            for inputs, labels in val_loader:
+                inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                total_val_loss += loss.item()
+
+                preds = outputs.argmax(dim=1)
+                correct += (preds == labels).sum().item()
+                total += labels.size(0)
+
+        avg_val_loss = total_val_loss / len(val_loader)
+        val_acc = correct / total
+        val_losses.append(avg_val_loss)
+
+        print(f"Epoch {epoch}: Train Loss = {avg_train_loss:.4f}, Val Loss = {avg_val_loss:.4f}, Val Acc = {val_acc:.4f}")
+
+    return train_losses, val_losses

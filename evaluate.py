@@ -2,20 +2,13 @@ import torch.nn as nn
 from data.language_model_dataset import TextDataset
 from model.language_model import LanguageModel
 from torch.utils.data import DataLoader
-from collections import Counter
 import math
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import torch
 from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
 from data.preprocess import load_imdb_dataset_with_labels
-def build_vocab(reviews, min_freq=2):
-    counter = Counter(token for review in reviews for token in review)
-    vocab = {"<UNK>": 0}
-    for token, freq in counter.items():
-        if freq >= min_freq:
-            vocab[token] = len(vocab)
-    return vocab
+from data.data_loader_utils import build_vocab
 
 def create_test_loader(test_data, vocab):
     test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
@@ -74,15 +67,15 @@ def plot_confusion_matrix(preds, true_labels, title="Confusion Matrix"):
     plt.show()
 
 
-def run_error_analysis(preds, true_labels, texts):
-    print("\nError Analysis:")
-    for i in range(len(preds)):
-        if preds[i] != true_labels[i]:
-            print(f" Review: {' '.join(texts[i][:30])}...")
-            print(f"   True: {true_labels[i]} | Pred: {preds[i]}")
-            print("--------------------------------------------------")
+def run_error_analysis(preds, true_labels, texts, num_examples=10):
+    print("\nError Analysis (First few wrong predictions):")
+    errors = (preds != true_labels).nonzero(as_tuple=True)[0]
+    for idx in errors[:num_examples]:
+        print(f"\nReview: {' '.join(texts[idx][:30])}...")
+        print(f"True Label: {true_labels[idx].item()} | Predicted: {preds[idx].item()}")
 
 def run_evaluation_classification(preds, test_y, test_data):
 
     plot_confusion_matrix(preds.cpu(), test_y)
     run_error_analysis(preds.cpu(), test_y, test_data)
+

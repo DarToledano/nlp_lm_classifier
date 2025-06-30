@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import Dataset
-
+from data.config import SEQ_LEN
 class TextDataset(Dataset):
-    def __init__(self, tokenized_reviews, vocab, seq_len=30):
+    def __init__(self, tokenized_reviews, vocab, seq_len=SEQ_LEN):
         """
         Args:
             tokenized_reviews: list of list of tokens

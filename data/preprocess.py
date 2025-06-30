@@ -6,14 +6,12 @@ import numpy as np
 from collections import Counter
 from nltk.tokenize import word_tokenize
 import nltk
-nltk.download('punkt')
-nltk.download('punkt_tab')
 import re
 
 def preprocess_text(text):
     text = text.lower()
-    text = re.sub(r"<.*?>", "", text)  # Remove HTML tags
-    text = re.sub(r"[^a-zA-Z0-9\s\-]", "", text)  # Keep hyphens
+    text = re.sub(r"<.*?>", "", text)  # Remove HTML
+    text = re.sub(r"[^a-zA-Z0-9\s\.,!?'\-]", "", text)  # Keep punctuation
     return text
 
 def load_reviews_from_dir(dir_path):

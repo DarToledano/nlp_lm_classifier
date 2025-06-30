@@ -30,11 +30,17 @@ def perform_eda(train_data, val_data, test_data):
 if __name__ == "__main__":
 
     # Task 1
-    print("==> Loading raw dataset for EDA...")
+    print("==> Loading raw dataset...")
     train_data, train_labels, val_data, val_labels, test_data, test_labels = load_imdb_dataset_with_labels("aclImdb")
+
+    print("\n==> Running Experiment B:")
+    run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
+    print("\n==> Evaluation for Experiment B:")
+"""
+    print("==> preforming EDA")
     perform_eda(train_data, val_data, test_data)
     print("\n EDA complete.")
-
+    
     print("\n==> Starting training pipeline...")
     vocab = train_pipeline(train_data, val_data, test_data)
     print("\n Full pipeline complete.")
@@ -50,10 +56,10 @@ if __name__ == "__main__":
     preds_a, test_y = run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels)
     print("\n==> tarting evaluation experiment A:")
     run_evaluation_classification(preds_a, test_y, test_labels)
+"""
 
-    print("\n==> Running Experiment B:")
-    model = run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels)
-    print("\n==> Evaluation for Experiment B:")
+
+
 
 
 

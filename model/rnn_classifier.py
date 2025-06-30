@@ -12,7 +12,6 @@ class RNNClassifier(nn.Module):
         if freeze_embeddings:
             self.embedding.weight.requires_grad = False
 
-        # RNN layer (you can change to LSTM or GRU if you want)
         self.rnn = nn.GRU(
             input_size=embedding_dim,
             hidden_size=hidden_dim,
