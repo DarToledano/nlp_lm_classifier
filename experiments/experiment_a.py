@@ -1,5 +1,6 @@
 import random
 import torch
+import pickle
 import matplotlib.pyplot as plt
 from data.data_loader_utils import build_vocab, create_classification_datasets_and_loaders
 from model.language_model import LanguageModel
@@ -28,15 +29,17 @@ def extract_sentence_embeddings(dataloader, language_model, device):
     return all_embeddings, all_labels
 
 def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels):
+
+    with open("data/vocab.pkl", "rb") as f:
+        vocab = pickle.load(f)
+
+    print(f"Vocab size for Experiment A: {len(vocab)}")
+
     # Step 1: Reduce training data to 20%
     reduced_size = int(len(train_data) * 0.2)
     combined = list(zip(train_data, train_labels))
     random.shuffle(combined)
     train_data, train_labels = zip(*combined[:reduced_size])
-
-    # Step 2: Build vocab from reduced training set
-    vocab = build_vocab(train_data)
-    print(f"Vocab size for Experiment A: {len(vocab)}")
 
     # Step 3: Create Dataloaders
     train_loader, val_loader, test_loader = create_classification_datasets_and_loaders(
@@ -56,7 +59,7 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
         num_layers=NUM_LAYERS,
         dropout=DROPOUT
     )
-    language_model.load_state_dict(torch.load("model.pth"))
+    language_model.load_state_dict(torch.load("model/model.pth", map_location=torch.device('cpu')))
     language_model.to(DEVICE)
 
     # Step 5: Extract sentence embeddings from LM

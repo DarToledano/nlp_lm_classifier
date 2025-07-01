@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from data.data_loader_utils import build_vocab, create_datasets_and_loaders
 from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE, LEARNING_RATE
 import math
-
+import pickle
 def train_one_epoch(model, dataloader, criterion, optimizer):
     model.train()
     total_loss, correct, total = 0, 0, 0
@@ -45,6 +45,9 @@ def validate(model, dataloader, criterion):
 def train_pipeline(train_data, val_data, test_data):
 
     vocab = build_vocab(train_data)
+    with open("data/vocab.pkl", "wb") as f:
+        pickle.dump(vocab, f)
+
     train_loader, val_loader, _ = create_datasets_and_loaders(train_data, val_data, test_data, vocab)
 
     model = LanguageModel(
@@ -73,7 +76,7 @@ def train_pipeline(train_data, val_data, test_data):
         train_accs.append(train_acc)
         val_accs.append(val_acc)
 
-    torch.save(model.state_dict(), "model.pth")
+    torch.save(model.state_dict(), "model/model.pth")
     plot_metrics(train_losses, val_losses, train_accs, val_accs)
 
     return vocab

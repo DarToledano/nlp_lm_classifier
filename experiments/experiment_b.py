@@ -1,4 +1,4 @@
-import random
+import pickle
 import torch
 import numpy as np
 from gensim.models import KeyedVectors
@@ -26,8 +26,8 @@ def load_word2vec(vocab, embedding_dim):
     return torch.tensor(embedding_matrix, dtype=torch.float)
 
 def run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, test_labels):
-    # Step 1: Build vocab
-    vocab = build_vocab(train_data)
+    with open("data/vocab.pkl", "rb") as f:
+        vocab = pickle.load(f)
     print(f"Vocab size for Experiment B: {len(vocab)}")
 
     # Step 2: Create Dataloaders
