@@ -9,6 +9,7 @@ from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYE
 from train import train_classifier_A
 from evaluate import run_evaluation_classification
 
+
 # Experiment A: Using pre-trained Language Model (LM) as a feature extractor (sentence embeddings) + MLP classifier
 
 def extract_sentence_embeddings(dataloader, language_model, device):
@@ -20,7 +21,7 @@ def extract_sentence_embeddings(dataloader, language_model, device):
         for batch_inputs, batch_labels in dataloader:
             batch_inputs, batch_labels = batch_inputs.to(device), batch_labels.to(device)
             _, hidden = language_model(batch_inputs)  # Get hidden state from LM
-            sentence_embed = hidden[-1]  # Take final layer hidden state [batch_size, hidden_dim]
+            sentence_embed = hidden[0][-1]  # Take last layer hidden state
             embeddings.append(sentence_embed.cpu())
             labels.append(batch_labels.cpu())
 
@@ -28,8 +29,8 @@ def extract_sentence_embeddings(dataloader, language_model, device):
     all_labels = torch.cat(labels, dim=0)
     return all_embeddings, all_labels
 
-def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels):
 
+def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, test_labels):
     with open("data/vocab.pkl", "rb") as f:
         vocab = pickle.load(f)
 
@@ -57,7 +58,7 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
         embedding_dim=EMBEDDING_DIM,
         hidden_dim=HIDDEN_DIM,
         num_layers=NUM_LAYERS,
-        dropout=DROPOUT
+        # dropout=DROPOUT
     )
     language_model.load_state_dict(torch.load("model/model.pth", map_location=torch.device('cpu')))
     language_model.to(DEVICE)
@@ -71,6 +72,8 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
     # Step 6: Train MLP classifier
     print("\nTraining MLP classifier on embeddings...")
     input_dim = train_embeddings.shape[1]
+    print("\nInput DIM: ", input_dim)
+
     mlp_model = MLPClassifier(input_dim=input_dim).to(DEVICE)
 
     train_losses, val_losses = train_classifier_A(

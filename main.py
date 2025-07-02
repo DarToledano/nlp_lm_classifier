@@ -38,7 +38,7 @@ if __name__ == "__main__":
         "data/aclImdb")
 
     print("==> preforming EDA")
-    #perform_eda(train_data, val_data, test_data)
+    perform_eda(train_data, val_data, test_data)
     print("\n EDA complete.")
 
     if os.path.exists("model/model.pth"):

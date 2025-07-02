@@ -17,9 +17,9 @@ def create_datasets_and_loaders(train_data, val_data, test_data, vocab):
     val_dataset = TextDataset(val_data, vocab, seq_len=SEQ_LEN)
     test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
 
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE,drop_last=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE,drop_last=True)
 
     return train_loader, val_loader, test_loader
 
@@ -29,8 +29,8 @@ def create_classification_datasets_and_loaders(train_texts, train_labels, val_te
     val_dataset = ClassificationDataset(val_texts, val_labels, vocab, seq_len=SEQ_LEN)
     test_dataset = ClassificationDataset(test_texts, test_labels, vocab, seq_len=SEQ_LEN)
 
-    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True,drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE,drop_last=True)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE,drop_last=True)
 
     return train_loader, val_loader, test_loader
