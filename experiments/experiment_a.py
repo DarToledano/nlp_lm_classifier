@@ -101,6 +101,5 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
 
     # Step 9: Confusion matrix and error analysis
     experiment = "A"
-    plot_experiments_grpahs(experiment,train_losses,val_losses,)
     run_evaluation_classification(experiment, preds.cpu(), test_y, test_data)
 

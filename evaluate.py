@@ -34,18 +34,6 @@ def plot_model_grpahs(train_losses, val_losses, train_accs, val_accs, train_ppls
     plt.savefig("accuracy_plot.png", dpi=300)
     plt.show()
 
-    # Plot Perplexity
-    plt.subplot(1, 3, 3)
-    plt.plot(train_ppls, label='Train PPL')
-    plt.plot(val_ppls, label='Val PPL')
-    plt.title("Perplexity")
-    plt.xlabel("Epoch")
-    plt.ylabel("PPL")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig("Training_metrics_all.png", dpi=300)
-    plt.show()
-
 def create_test_loader(test_data, vocab):
     test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
     test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
