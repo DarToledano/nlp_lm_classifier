@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from data.config import DEVICE
+from evaluate import run_evaluation_language_model
 def train_one_epoch(model, dataloader, criterion, optimizer):
     model.train()
     total_loss, correct, total = 0, 0, 0
@@ -81,26 +82,12 @@ def train_pipeline(train_data, val_data, test_data):
         val_accs.append(val_acc)
 
     torch.save(model.state_dict(), "model/model.pth")
-    plot_metrics(train_losses, val_losses, train_accs, val_accs)
+
+    print("\n==> Starting evaluation on language model...")
+    run_evaluation_language_model(vocab,test_data, train_losses, val_losses, train_accs, val_accs, train_ppl, val_ppl)
+    print("\n==> Evaluation complete.")
 
     return vocab
-
-def plot_metrics(train_losses, val_losses, train_accs, val_accs):
-    plt.figure(figsize=(10, 4))
-    plt.subplot(1, 2, 1)
-    plt.plot(train_losses, label='Train Loss')
-    plt.plot(val_losses, label='Val Loss')
-    plt.legend()
-    plt.title("Loss")
-
-    plt.subplot(1, 2, 2)
-    plt.plot(train_accs, label='Train Acc')
-    plt.plot(val_accs, label='Val Acc')
-    plt.legend()
-    plt.title("Accuracy")
-
-    plt.tight_layout()
-    plt.show()
 
 # Task 2
 from model.language_model import LanguageModel

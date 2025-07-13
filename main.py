@@ -47,9 +47,6 @@ if __name__ == "__main__":
         print("\n==> Starting training model...")
         vocab = train_pipeline(train_data, val_data, test_data)
         print("\n==> Training complete.")
-        print("\n==> Starting evaluation on language model...")
-        run_evaluation_language_model(test_data, vocab)
-        print("\n==> Evaluation complete.")
 
     # Task 2
     print("\n==> Starting classification ...")

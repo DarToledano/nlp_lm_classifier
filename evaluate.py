@@ -9,6 +9,45 @@ import torch
 from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
 from data.preprocess import load_imdb_dataset_with_labels
 from data.data_loader_utils import build_vocab
+def plot_metrics(train_losses, val_losses, train_accs, val_accs, train_ppls, val_ppls):
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(15, 4))
+
+    # Plot Loss
+    plt.figure()
+    plt.plot(train_losses, label='Train Loss')
+    plt.plot(val_losses, label='Val Loss')
+    plt.title("Training vs Validation Loss")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss")
+    plt.legend()
+    plt.savefig("loss_plot.png", dpi=300)
+    plt.show()
+
+    # Plot Accuracy
+    plt.figure()
+    plt.plot(train_accs, label='Train Accuracy')
+    plt.plot(val_accs, label='Val Accuracy')
+    plt.title("Training vs Validation Accuracy")
+    plt.xlabel("Epoch")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    plt.savefig("accuracy_plot.png", dpi=300)
+    plt.show()
+
+    # Plot Perplexity
+    plt.subplot(1, 3, 3)
+    plt.plot(train_ppls, label='Train PPL')
+    plt.plot(val_ppls, label='Val PPL')
+    plt.title("Perplexity")
+    plt.xlabel("Epoch")
+    plt.ylabel("PPL")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig("Training_metrics_all.png", dpi=300)
+    plt.show()
+
 
 def create_test_loader(test_data, vocab):
     test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
@@ -32,7 +71,7 @@ def evaluate_model(model, dataloader, criterion):
     perplexity = math.exp(avg_loss)
     return avg_loss, perplexity
 
-def run_evaluation_language_model(test_data, vocab):
+def run_evaluation_language_model(vocab,test_data, train_losses, val_losses, train_accs, val_accs, train_ppl, val_ppl):
 
     print("==> Preparing test loader...")
     test_loader = create_test_loader(test_data, vocab)
@@ -46,7 +85,7 @@ def run_evaluation_language_model(test_data, vocab):
         dropout=DROPOUT
     ).to(DEVICE)
 
-    model.load_state_dict(torch.load("model.pth"))
+    model.load_state_dict(torch.load("mode/model.pth"))
     criterion = nn.CrossEntropyLoss()
 
     print("==> Evaluating...")
@@ -54,6 +93,8 @@ def run_evaluation_language_model(test_data, vocab):
 
     print(f"\nTest Loss: {avg_loss:.4f}")
     print(f"Test Perplexity: {perplexity:.2f}")
+
+    plot_metrics(train_losses, val_losses, train_accs, val_accs, train_ppl, val_ppl)
 
 
 def plot_confusion_matrix(filename, preds, true_labels, title="Confusion Matrix"):

@@ -102,5 +102,6 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
         print(f"\nTest Accuracy (Experiment A): {acc:.4f}")
 
     # Step 9: Confusion matrix and error analysis
-    run_evaluation_classification(preds.cpu(), test_y, test_data)
+    experiment = "A"
+    run_evaluation_classification(experiment, preds.cpu(), test_y, test_data)
 
