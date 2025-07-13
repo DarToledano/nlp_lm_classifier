@@ -61,11 +61,10 @@ def run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, 
         epochs=10
     )
 
-    # Step 6: Plot train vs val loss graph
     plt.plot(train_losses, label="Train Loss")
     plt.plot(val_losses, label="Val Loss")
     plt.legend()
-    plt.title("Train vs Validation Loss (Experiment B)")
+    plt.title("Train vs Validation Loss (Experiment A)")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     filename = "Training_graph_B.png"
@@ -88,6 +87,7 @@ def run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, 
 
     final_preds = torch.cat(all_preds)
     final_labels = torch.cat(all_labels)
+
 
     # Step 8: Confusion matrix and error analysis
     experiment = "B"

@@ -9,9 +9,7 @@ import torch
 from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYERS, DROPOUT, EPOCHS, DEVICE
 from data.preprocess import load_imdb_dataset_with_labels
 from data.data_loader_utils import build_vocab
-def plot_metrics(train_losses, val_losses, train_accs, val_accs, train_ppls, val_ppls):
-    import matplotlib.pyplot as plt
-
+def plot_model_grpahs(train_losses, val_losses, train_accs, val_accs, train_ppls, val_ppls):
     plt.figure(figsize=(15, 4))
 
     # Plot Loss
@@ -47,7 +45,6 @@ def plot_metrics(train_losses, val_losses, train_accs, val_accs, train_ppls, val
     plt.tight_layout()
     plt.savefig("Training_metrics_all.png", dpi=300)
     plt.show()
-
 
 def create_test_loader(test_data, vocab):
     test_dataset = TextDataset(test_data, vocab, seq_len=SEQ_LEN)
@@ -94,7 +91,7 @@ def run_evaluation_language_model(vocab,test_data, train_losses, val_losses, tra
     print(f"\nTest Loss: {avg_loss:.4f}")
     print(f"Test Perplexity: {perplexity:.2f}")
 
-    plot_metrics(train_losses, val_losses, train_accs, val_accs, train_ppl, val_ppl)
+    plot_model_grpahs(train_losses, val_losses, train_accs, val_accs, train_ppl, val_ppl)
 
 
 def plot_confusion_matrix(filename, preds, true_labels, title="Confusion Matrix"):

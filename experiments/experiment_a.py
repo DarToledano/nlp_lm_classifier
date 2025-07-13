@@ -9,7 +9,6 @@ from data.config import SEQ_LEN, BATCH_SIZE, EMBEDDING_DIM, HIDDEN_DIM, NUM_LAYE
 from train import train_classifier_A
 from evaluate import run_evaluation_classification
 
-
 # Experiment A: Using pre-trained Language Model (LM) as a feature extractor (sentence embeddings) + MLP classifier
 
 def extract_sentence_embeddings(dataloader, language_model, device):
@@ -83,7 +82,6 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
         epochs=10
     )
 
-    # Step 7: Plot loss curves
     plt.plot(train_losses, label="Train Loss")
     plt.plot(val_losses, label="Val Loss")
     plt.legend()
@@ -94,7 +92,7 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
     plt.savefig(filename, dpi=300)
     plt.show()
 
-    # Step 8: Evaluate on test set
+    # Step 7: Evaluate on test set
     mlp_model.eval()
     with torch.no_grad():
         preds = mlp_model(test_embeddings.to(DEVICE)).argmax(dim=1)
@@ -103,5 +101,6 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
 
     # Step 9: Confusion matrix and error analysis
     experiment = "A"
+    plot_experiments_grpahs(experiment,train_losses,val_losses,)
     run_evaluation_classification(experiment, preds.cpu(), test_y, test_data)
 
