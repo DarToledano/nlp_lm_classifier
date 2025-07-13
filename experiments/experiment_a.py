@@ -90,6 +90,8 @@ def run_experiment_a(train_data, train_labels, val_data, val_labels, test_data, 
     plt.title("Train vs Validation Loss (Experiment A)")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
+    filename = "Training_graph_A.png"
+    plt.savefig(filename, dpi=300)
     plt.show()
 
     # Step 8: Evaluate on test set

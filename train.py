@@ -206,6 +206,8 @@ def plot_metrics(train_losses, val_losses, train_accs, val_accs):
     plt.title("Accuracy")
 
     plt.tight_layout()
+    filename = "Training_graph_model.png"
+    plt.savefig(filename, dpi=300)
     plt.show()
 
 # Task 2
@@ -292,51 +294,4 @@ def train_classifier_B(model, train_loader, val_loader, epochs=10, lr=0.001):
 
     return train_losses, val_losses
 
-def train_classifier_B(model, train_loader, val_loader, epochs=10, lr=0.001):
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    train_losses = []
-    val_losses = []
-
-    for epoch in range(1, epochs + 1):
-        # -------- Train ----------
-        model.train()
-        total_train_loss = 0
-
-        for inputs, labels in train_loader:
-            inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
-            optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            total_train_loss += loss.item()
-
-        avg_train_loss = total_train_loss / len(train_loader)
-        train_losses.append(avg_train_loss)
-
-        # -------- Validation ----------
-        model.eval()
-        total_val_loss = 0
-        correct = 0
-        total = 0
-
-        with torch.no_grad():
-            for inputs, labels in val_loader:
-                inputs, labels = inputs.to(DEVICE), labels.to(DEVICE)
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                total_val_loss += loss.item()
-
-                preds = outputs.argmax(dim=1)
-                correct += (preds == labels).sum().item()
-                total += labels.size(0)
-
-        avg_val_loss = total_val_loss / len(val_loader)
-        val_acc = correct / total
-        val_losses.append(avg_val_loss)
-
-        print(f"Epoch {epoch}: Train Loss = {avg_train_loss:.4f}, Val Loss = {avg_val_loss:.4f}, Val Acc = {val_acc:.4f}")
-
-    return train_losses, val_losses

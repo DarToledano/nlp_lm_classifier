@@ -68,6 +68,8 @@ def run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, 
     plt.title("Train vs Validation Loss (Experiment B)")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
+    filename = "Training_graph_B.png"
+    plt.savefig(filename, dpi=300)
     plt.show()
 
     # Step 7: Evaluate on test set
@@ -87,7 +89,7 @@ def run_experiment_b(train_data, train_labels, val_data, val_labels, test_data, 
     final_preds = torch.cat(all_preds)
     final_labels = torch.cat(all_labels)
 
-    # Step 8: Confusion matrix and error analysis (like A)
+    # Step 8: Confusion matrix and error analysis
     run_evaluation_classification(final_preds, final_labels, test_data)
 
     return final_preds, final_labels

@@ -56,11 +56,12 @@ def run_evaluation_language_model(test_data, vocab):
     print(f"Test Perplexity: {perplexity:.2f}")
 
 
-def plot_confusion_matrix(preds, true_labels, title="Confusion Matrix"):
+def plot_confusion_matrix(filename, preds, true_labels, title="Confusion Matrix"):
     cm = confusion_matrix(true_labels, preds)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["neg", "pos"])
     disp.plot(cmap=plt.cm.Blues)
     plt.title(title)
+    plt.savefig(filename, dpi=300, bbox_inches='tight')
     plt.show()
 
 
@@ -71,8 +72,13 @@ def run_error_analysis(preds, true_labels, texts, num_examples=10):
         print(f"\nReview: {' '.join(texts[idx][:30])}...")
         print(f"True Label: {true_labels[idx].item()} | Predicted: {preds[idx].item()}")
 
-def run_evaluation_classification(preds, test_y, test_data):
+def run_evaluation_classification(experiment, preds, test_y, test_data):
 
-    plot_confusion_matrix(preds.cpu(), test_y)
+    if experiment == "A":
+        filename_cm = "confusion_matrix_A.png"
+    else:
+        filename_cm = "confusion_matrix_B.png"
+
+    plot_confusion_matrix(filename_cm,preds.cpu(), test_y)
     run_error_analysis(preds.cpu(), test_y, test_data)
 
