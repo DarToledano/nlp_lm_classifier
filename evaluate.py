@@ -82,7 +82,7 @@ def run_evaluation_language_model(vocab,test_data, train_losses, val_losses, tra
         dropout=DROPOUT
     ).to(DEVICE)
 
-    model.load_state_dict(torch.load("mode/model.pth"))
+    model.load_state_dict(torch.load("model/model.pth"))
     criterion = nn.CrossEntropyLoss()
 
     print("==> Evaluating...")
